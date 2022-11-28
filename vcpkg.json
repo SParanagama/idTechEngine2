@@ -1,0 +1,10 @@
+{
+  "name": "q2engine",
+  "version": "0.0.1",
+  "dependencies": [
+    "sdl2",
+    "curl",
+    "openal-soft"
+  ],
+  "builtin-baseline": "15a0ab7a3e62e62c29bc677589e8974fe401a436"
+}

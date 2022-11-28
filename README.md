@@ -24,3 +24,7 @@ The official releases (including Windows binaries) can be found at our
 homepage: https://www.yamagi.org/quake2  
 **Unsupported** preview builds for Windows can be found at
 https://deponie.yamagi.org/quake2/misc/
+
+## Program arguments
+
+`+set vid_renderer gl3 -datadir "D:\Program Files (x86)\Steam\steamapps\common\Quake 2"`

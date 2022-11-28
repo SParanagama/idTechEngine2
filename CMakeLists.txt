@@ -1,7 +1,4 @@
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-
-# Print a message that using the Makefiles is recommended.
-message(NOTICE: " The CMakeLists.txt is unmaintained. Use the Makefile if possible.")
+cmake_minimum_required(VERSION 3.21)
 
 # Enforce "Debug" as standard build type.
 if(NOT CMAKE_BUILD_TYPE)
@@ -11,8 +8,7 @@ endif()
 # CMake project configuration.
 project(yquake2 C)
 
-# Cmake module search path.
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/stuff/cmake/modules ${CMAKE_MODULE_PATH})
+set(CMAKE_TOOLCHAIN_FILE "${PROJECT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 #if(YQUAKE2LIBS)
 #	if(CMAKE_CROSSCOMPILING)
@@ -84,7 +80,6 @@ set(GAME_SRC_DIR ${SOURCE_DIR}/game)
 set(SERVER_SRC_DIR ${SOURCE_DIR}/server)
 set(CLIENT_SRC_DIR ${SOURCE_DIR}/client)
 set(REF_SRC_DIR ${SOURCE_DIR}/client/refresh)
-set(LIBS_DIR ${CMAKE_CURRENT_LIST_DIR}/libs)
 
 # Operating system.
 set(YQ2OSTYPE "${CMAKE_SYSTEM_NAME}" CACHE STRING "Override operation system type")
@@ -185,9 +180,9 @@ endif()
 # them and add the include/linker directories and flags (in case the package
 # manager find it in a weird place).
 
-find_package(SDL2 REQUIRED)
+find_package(SDL2 CONFIG REQUIRED)
 list(APPEND yquake2IncludeDirectories "${SDL2_INCLUDE_DIR}/..")
-list(APPEND yquake2SDLLinkerFlags ${SDL2_LIBRARY})
+list(APPEND yquake2SDLLinkerFlags SDL2::SDL2 SDL2::SDL2main)
 
 # We need an OpenGL implementation.
 set(OpenGL_GL_PREFERENCE GLVND)
@@ -214,13 +209,13 @@ endif()
 
 # cURL support.
 if (${CURL_SUPPORT})
-	find_package(CURL REQUIRED)
+	find_package(CURL CONFIG REQUIRED)
 	add_definitions(-DUSE_CURL)
 endif()
 
 # OpenAL support.
 if(${OPENAL_SUPPORT})
-	find_package(OpenAL)
+	find_package(OpenAL CONFIG REQUIRED)
 
 	if(${OPENAL_FOUND})
 		list(APPEND yquake2IncludeDirectories "${OPENAL_INCLUDE_DIR}")
@@ -686,6 +681,8 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 			RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/release
 			C_STANDARD 11
 			)
+
+	message("SDL2 Linker flags: ${yquake2SDLLinkerFlags}")
 	target_link_libraries(yquake2 ${yquake2LinkerFlags} ${yquake2ClientLinkerFlags}
 			${yquake2SDLLinkerFlags} ${yquake2ZLibLinkerFlags} ws2_32 winmm)
 
